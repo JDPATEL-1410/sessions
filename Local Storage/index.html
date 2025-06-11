@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realistic To-Do List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #E0F2F7; /* A very light, calming blue-green */
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    padding: 30px 15px;
+    box-sizing: border-box;
+}
+
+.container {
+    background-color: #FFFFFF; /* Pure white for a clean, bright feel */
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Slightly more prominent shadow */
+    padding: 35px; /* Increased padding */
+    width: 100%;
+    max-width: 550px; /* Slightly wider container */
+}
+
+h1 {
+    text-align: center;
+    color: #2C3E50; /* Deep charcoal for strong headings */
+    margin-bottom: 30px; /* Increased margin */
+    font-size: 2.4em; /* Slightly larger heading */
+    font-weight: 600; /* Medium-bold */
+}
+
+.input-section {
+    display: flex;
+    gap: 12px; /* Increased gap */
+    margin-bottom: 30px; /* Increased margin */
+}
+
+#nameInput {
+    flex-grow: 1;
+    padding: 14px 18px; /* Larger padding for input */
+    border: 1px solid #C9D6DE; /* Softer border color */
+    border-radius: 10px; /* Slightly more rounded corners */
+    font-size: 1.1em; /* Slightly larger font */
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#nameInput:focus {
+    border-color: #007BFF; /* Primary blue on focus */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* Subtle blue glow */
+}
+
+.action-button {
+    background-color: #20B2AA; /* A calming Teal color for the primary action */
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 22px; /* Larger padding */
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500; /* Medium weight */
+}
+
+.action-button:hover {
+    background-color: #1A9F97; /* Darker teal on hover */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(32, 178, 170, 0.3); /* Shadow on hover */
+}
+
+.action-button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+h2 {
+    color: #4CAF50; /* A fresh green for section headings */
+    margin-top: 35px;
+    margin-bottom: 20px;
+    font-size: 2em;
+    border-bottom: 1px solid #E0F2F7; /* Light border matching background */
+    padding-bottom: 12px;
+    font-weight: 600;
+}
+
+#recordlist .record-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #F8FDFF; /* Very light blue background for items */
+    border: 1px solid #E6F3F7; /* Lighter border */
+    border-radius: 10px;
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#recordlist .record-item:hover {
+    background-color: #EBF8FC; /* Slightly darker on hover */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* More noticeable shadow */
+}
+
+.record-content {
+    flex-grow: 1;
+    font-size: 1.15em; /* Slightly larger content font */
+    color: #555;
+    word-break: break-word;
+}
+
+.record-index {
+    font-weight: bold;
+    margin-right: 12px;
+    color: #777;
+    background-color: #F0F0F0; /* Neutral background for index */
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.record-buttons {
+    display: flex;
+    gap: 10px; /* Increased gap between buttons */
+}
+
+.record-buttons button {
+    background: none;
+    border: none;
+    font-size: 1.2em; /* Slightly larger icon size */
+    cursor: pointer;
+    padding: 10px; /* Larger padding for clickable area */
+    border-radius: 8px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.record-buttons .edit-button {
+    color: #FFA500; /* A vibrant orange for edit */
+}
+
+.record-buttons .edit-button:hover {
+    background-color: #FFF2E0; /* Light orange on hover */
+    transform: translateY(-1px);
+}
+
+.record-buttons .delete-button {
+    color: #DC3545; /* Retaining red for delete (universal warning color) */
+}
+
+.record-buttons .delete-button:hover {
+    background-color: #FFE6E6; /* Light red on hover */
+    transform: translateY(-1px);
+}
+
+.record-buttons button i {
+    pointer-events: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .input-section {
+        flex-direction: column;
+    }
+
+    .action-button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .container {
+        padding: 25px; /* Slightly less padding on small screens */
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+}    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1><i class="fas fa-clipboard-list"></i> My To-Do List</h1>
+
+        <div class="input-section">
+            <input type="text" id="nameInput" placeholder="Add a new task...">
+            <button id="mainActionButton" class="action-button" onclick="addOrUpdateRec()">
+                <i class="fas fa-plus"></i> ADD
+            </button>
+        </div>
+
+        <h2><i class="fas fa-tasks"></i> All Tasks:</h2>
+        <div id="recordlist">
+            </div>
+    </div>
+
+    <script>
+        let editingIndex = -1; // -1 means no record is being edited
+
+        // Fetch records from localStorage
+        function getRec() {
+            const data = localStorage.getItem("myRec");
+            return data ? JSON.parse(data) : [];
+        }
+
+        // Save records to localStorage
+        function saveRec(recs) {
+            localStorage.setItem("myRec", JSON.stringify(recs));
+        }
+
+        // Add a new record or update an existing one
+        function addOrUpdateRec() {
+            const input = document.getElementById("nameInput");
+            const name = input.value.trim();
+            if (!name) return;
+
+            const records = getRec();
+            if (editingIndex === -1) {
+                // Add new record
+                records.push(name);
+            } else {
+                // Update existing record
+                records[editingIndex] = name;
+                editingIndex = -1; // Reset editing state
+                document.getElementById("mainActionButton").innerHTML = '<i class="fas fa-plus"></i> ADD';
+                document.getElementById("mainActionButton").style.backgroundColor = '#007bff';
+            }
+            saveRec(records);
+            input.value = '';
+            disRec();
+        }
+
+        // Delete a record by index
+        function deleteRec(index) {
+            const records = getRec();
+            records.splice(index, 1);
+            saveRec(records);
+            disRec();
+            // If the deleted item was being edited, clear the input and reset button
+            if (editingIndex === index) {
+                document.getElementById("nameInput").value = '';
+                editingIndex = -1;
+                document.getElementById("mainActionButton").innerHTML = '<i class="fas fa-plus"></i> ADD';
+                document.getElementById("mainActionButton").style.backgroundColor = '#007bff';
+            }
+        }
+
+        // Edit a record by index
+        function editRec(index) {
+            const records = getRec();
+            const input = document.getElementById("nameInput");
+            input.value = records[index];
+            editingIndex = index; // Set the index of the record being edited
+
+            // Change button text and color to indicate update mode
+            document.getElementById("mainActionButton").innerHTML = '<i class="fas fa-edit"></i> UPDATE';
+            document.getElementById("mainActionButton").style.backgroundColor = '#28a745';
+            input.focus(); // Focus on the input field
+        }
+
+        // Display all records
+        function disRec() {
+            const records = getRec();
+            const list = document.getElementById("recordlist");
+            list.innerHTML = "";
+            if (records.length === 0) {
+                list.innerHTML = "<p style='text-align: center; color: #888;'>No tasks yet. Add one above!</p>";
+                return;
+            }
+            records.forEach((name, index) => {
+                list.innerHTML += `
+                    <div class="record-item">
+                        <span class="record-content">
+                            <span class="record-index">${index + 1}.</span> ${name}
+                        </span>
+                        <div class="record-buttons">
+                            <button class="edit-button" onclick="editRec(${index})" title="Edit Task">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="delete-button" onclick="deleteRec(${index})" title="Delete Task">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        // Load records on page load
+        window.onload = disRec;
+    </script>
+</body>
+
+</html>

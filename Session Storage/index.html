@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realistic To-Do List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            /* Dark Cyber Theme */
+            --primary-gradient: linear-gradient(135deg, #0f3460 0%, #e94560 100%);
+            --secondary-gradient: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+            --success-gradient: linear-gradient(135deg, #00d4aa 0%, #00a8cc 100%);
+            --warning-gradient: linear-gradient(135deg, #f38ba8 0%, #fab2b5 100%);
+            --danger-gradient: linear-gradient(135deg, #e94560 0%, #f38ba8 100%);
+            --glass-bg: rgba(15, 52, 96, 0.15);
+            --glass-border: rgba(0, 212, 170, 0.3);
+            --text-primary: #e2e8f0;
+            --text-secondary: #cbd5e0;
+            --shadow-soft: 0 10px 40px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 20px 60px rgba(0, 0, 0, 0.4);
+            --border-radius: 16px;
+            --neon-glow: 0 0 20px rgba(0, 212, 170, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            background: linear-gradient(135deg, #000428 0%, #004e92 50%, #001122 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 212, 170, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(233, 69, 96, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(0, 168, 204, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300d4aa' fill-opacity='0.03'%3E%3Cpath d='M20 20c0-1.1-.9-2-2-2s-2 .9-2 2 .9 2 2 2 2-.9 2-2zm0 0h20v20H20V20zm0 0V0h20v20H20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+            pointer-events: none;
+        }
+
+        .container {
+            background: rgba(15, 52, 96, 0.2);
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-soft), var(--neon-glow);
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: var(--success-gradient);
+            border-radius: var(--border-radius);
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: #00d4aa;
+            margin-bottom: 40px;
+            font-size: 2.8em;
+            font-weight: 700;
+            text-shadow: 0 0 30px rgba(0, 212, 170, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        h1 i {
+            background: var(--success-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.2em;
+            filter: drop-shadow(0 0 10px rgba(0, 212, 170, 0.7));
+        }
+
+        .input-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        #nameInput {
+            flex-grow: 1;
+            padding: 18px 24px;
+            border: 2px solid rgba(0, 212, 170, 0.3);
+            border-radius: 12px;
+            font-size: 1.1em;
+            background: rgba(15, 52, 96, 0.3);
+            backdrop-filter: blur(10px);
+            color: var(--text-primary);
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            font-family: inherit;
+        }
+
+        #nameInput::placeholder {
+            color: rgba(226, 232, 240, 0.6);
+        }
+
+        #nameInput:focus {
+            border-color: #00d4aa;
+            box-shadow: 0 0 0 4px rgba(0, 212, 170, 0.2), 
+                        0 0 30px rgba(0, 212, 170, 0.3),
+                        0 8px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .action-button {
+            background: var(--primary-gradient);
+            color: white;
+            border: 2px solid rgba(0, 212, 170, 0.4);
+            border-radius: 12px;
+            padding: 18px 28px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 25px rgba(233, 69, 96, 0.4), 
+                        0 0 20px rgba(0, 212, 170, 0.2);
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: inherit;
+        }
+
+        .action-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 170, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .action-button:hover::before {
+            left: 100%;
+        }
+
+        .action-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(233, 69, 96, 0.5),
+                        0 0 30px rgba(0, 212, 170, 0.4);
+            border-color: #00d4aa;
+        }
+
+        .action-button:active {
+            transform: translateY(-1px);
+        }
+
+        h2 {
+            color: #00d4aa;
+            margin-top: 40px;
+            margin-bottom: 25px;
+            font-size: 2.2em;
+            font-weight: 600;
+            text-shadow: 0 0 20px rgba(0, 212, 170, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 i {
+            background: var(--success-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 8px rgba(0, 212, 170, 0.6));
+        }
+
+        #recordlist {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .record-item {
+            background: rgba(15, 52, 96, 0.3);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 212, 170, 0.2);
+            border-radius: 14px;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .record-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--success-gradient);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .record-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1), rgba(233, 69, 96, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .record-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .record-item:hover::after {
+            opacity: 1;
+        }
+
+        .record-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3),
+                        0 0 30px rgba(0, 212, 170, 0.2);
+            border-color: rgba(0, 212, 170, 0.4);
+        }
+
+        .record-content {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .record-index {
+            background: var(--success-gradient);
+            color: #000428;
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9em;
+            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.4), 
+                        0 0 20px rgba(0, 212, 170, 0.2);
+            border: 1px solid rgba(0, 212, 170, 0.5);
+        }
+
+        .record-text {
+            font-size: 1.15em;
+            color: var(--text-primary);
+            font-weight: 500;
+            word-break: break-word;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .record-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .record-buttons button {
+            background: rgba(15, 52, 96, 0.4);
+            border: 1px solid rgba(0, 212, 170, 0.2);
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .edit-button {
+            color: #f6ad55;
+        }
+
+        .edit-button:hover {
+            background: var(--warning-gradient);
+            color: #000428;
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(246, 173, 85, 0.4),
+                        0 0 20px rgba(246, 173, 85, 0.3);
+            border-color: #f6ad55;
+        }
+
+        .delete-button {
+            color: #e94560;
+        }
+
+        .delete-button:hover {
+            background: var(--danger-gradient);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(233, 69, 96, 0.4),
+                        0 0 20px rgba(233, 69, 96, 0.3);
+            border-color: #e94560;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(226, 232, 240, 0.7);
+            font-size: 1.2em;
+        }
+
+        .empty-state i {
+            font-size: 4em;
+            margin-bottom: 20px;
+            color: #00d4aa;
+            filter: drop-shadow(0 0 20px rgba(0, 212, 170, 0.5));
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            .input-section {
+                flex-direction: column;
+            }
+
+            .action-button {
+                width: 100%;
+                justify-content: center;
+            }
+
+            h1 {
+                font-size: 2.2em;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            h2 {
+                font-size: 1.8em;
+            }
+
+            .record-item {
+                padding: 15px 20px;
+            }
+
+            .record-buttons {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .record-buttons button {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        /* Animation for new items */
+        .record-item.new-item {
+            animation: slideInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Update button style */
+        .action-button.update-mode {
+            background: var(--success-gradient);
+            box-shadow: 0 8px 25px rgba(0, 212, 170, 0.4),
+                        0 0 30px rgba(0, 212, 170, 0.3);
+            border-color: #00d4aa;
+        }
+
+        .action-button.update-mode:hover {
+            box-shadow: 0 15px 40px rgba(0, 212, 170, 0.5),
+                        0 0 40px rgba(0, 212, 170, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1><i class="fas fa-clipboard-list"></i> My To-Do List</h1>
+
+        <div class="input-section">
+            <input type="text" id="nameInput" placeholder="What needs to be done today?">
+            <button id="mainActionButton" class="action-button" onclick="addOrUpdateRec()">
+                <i class="fas fa-plus"></i> ADD
+            </button>
+        </div>
+
+        <h2><i class="fas fa-tasks"></i> All Tasks</h2>
+        <div id="recordlist">
+        </div>
+    </div>
+
+    <script>
+        let editingIndex = -1; // -1 means no record is being edited
+
+        // Fetch records from sessionStorage
+        function getRec() {
+            const data = sessionStorage.getItem("myRec");
+            return data ? JSON.parse(data) : [];
+        }
+
+        // Save records to sessionStorage
+        function saveRec(recs) {
+            sessionStorage.setItem("myRec", JSON.stringify(recs));
+        }
+
+        // Add a new record or update an existing one
+        function addOrUpdateRec() {
+            const input = document.getElementById("nameInput");
+            const name = input.value.trim();
+            if (!name) return;
+
+            const records = getRec();
+            if (editingIndex === -1) {
+                // Add new record
+                records.push(name);
+            } else {
+                // Update existing record
+                records[editingIndex] = name;
+                editingIndex = -1; // Reset editing state
+                const button = document.getElementById("mainActionButton");
+                button.innerHTML = '<i class="fas fa-plus"></i> ADD';
+                button.classList.remove('update-mode');
+            }
+            saveRec(records);
+            input.value = '';
+            disRec();
+        }
+
+        // Delete a record by index
+        function deleteRec(index) {
+            const records = getRec();
+            records.splice(index, 1);
+            saveRec(records);
+            disRec();
+            // If the deleted item was being edited, clear the input and reset button
+            if (editingIndex === index) {
+                document.getElementById("nameInput").value = '';
+                editingIndex = -1;
+                const button = document.getElementById("mainActionButton");
+                button.innerHTML = '<i class="fas fa-plus"></i> ADD';
+                button.classList.remove('update-mode');
+            } else if (editingIndex > index) {
+                editingIndex--; // Adjust editing index if needed
+            }
+        }
+
+        // Edit a record by index
+        function editRec(index) {
+            const records = getRec();
+            const input = document.getElementById("nameInput");
+            input.value = records[index];
+            editingIndex = index; // Set the index of the record being edited
+
+            // Change button text and style to indicate update mode
+            const button = document.getElementById("mainActionButton");
+            button.innerHTML = '<i class="fas fa-edit"></i> UPDATE';
+            button.classList.add('update-mode');
+            input.focus(); // Focus on the input field
+        }
+
+        // Display all records
+        function disRec() {
+            const records = getRec();
+            const list = document.getElementById("recordlist");
+            list.innerHTML = "";
+            
+            if (records.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-list"></i>
+                        <div>No tasks yet. Add one above to get started!</div>
+                    </div>`;
+                return;
+            }
+            
+            records.forEach((name, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'record-item new-item';
+                itemDiv.innerHTML = `
+                    <div class="record-content">
+                        <div class="record-index">${index + 1}</div>
+                        <div class="record-text">${name}</div>
+                    </div>
+                    <div class="record-buttons">
+                        <button class="edit-button" onclick="editRec(${index})" title="Edit Task">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-button" onclick="deleteRec(${index})" title="Delete Task">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>`;
+                list.appendChild(itemDiv);
+                
+                // Remove animation class after animation completes
+                setTimeout(() => {
+                    itemDiv.classList.remove('new-item');
+                }, 500);
+            });
+        }
+
+        // Handle Enter key press in input field
+        document.getElementById("nameInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                addOrUpdateRec();
+            }
+        });
+
+        // Load records on page load
+        window.onload = disRec;
+    </script>
+</body>
+
+</html>
